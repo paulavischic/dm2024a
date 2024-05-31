@@ -140,7 +140,7 @@ AgregarVariables_IntraMes <- function(dataset) {
   dataset[,renta_anual_tarjeta:= mrentabilidad_annual / ctarjeta_debito_transacciones]
   dataset[,renta_autoservicio:= mrentabilidad / mautoservicio]
   dataset[,renta_anual_autoservicio:= mrentabilidad_annual / mautoservicio]
-  dataset[,total_consumo:= (mautoservicio + mtarjeta_visa_consumo + mtarjeta_master_consumo)]
+  #dataset[,total_consumo:= rowSums(cbind(mautoservicio,mtarjeta_visa_consumo,mtarjeta_master_consumo),na.rm=TRUE)]
   dataset[,consumo_sobre_limite_visa:= mtarjeta_visa_consumo / Visa_mlimitecompra]
   dataset[,consumo_sobre_limite_master:= mtarjeta_visa_consumo / Master_mlimitecompra]
   dataset[,inversiones_edad:= (minversion1_pesos+minversion1_dolares+minversion2+mplazo_fijo_dolares+mplazo_fijo_pesos) / (cliente_edad)^2]
@@ -152,6 +152,27 @@ AgregarVariables_IntraMes <- function(dataset) {
   dataset[,total_seguros:= (cseguro_vida+cseguro_auto+cseguro_vivienda+cseguro_accidentes_personales)]
   dataset[,total_consumo_sobre_sueldo:= (mautoservicio+mtarjeta_visa_consumo+mtarjeta_master_consumo) / (mpayroll + mpayroll2)]
   dataset[,sueldo_sobre_antiguedad:= (mpayroll + mpayroll2) / cliente_antiguedad]
+  dataset[,payroll_binaria:=ifelse((mpayroll+mpayroll2)>0, 1,0)]
+  dataset[,payroll_mrentabilidad:=(mpayroll+mpayroll2)/mrentabilidad_annual]
+  dataset[,vm_consumo_payroll:=(vm_mconsumospesos + vm_mconsumosdolares)/(mpayroll+mpayroll2)]
+  dataset[,minversiones:=minversion1_pesos+minversion1_dolares+minversion2]
+  dataset[,mpasivos_inversiones:=mpasivos_margen/(mpayroll + mpayroll + minversiones)]
+  dataset[,mpasivos_inversiones_pf:=mpasivos_margen/(mpayroll + mpayroll + minversiones + mplazo_fijo_dolares + mplazo_fijo_pesos)]
+  dataset[,prestamos_binaria:=ifelse((cprestamos_personales+cprestamos_prendarios + cprestamos_hipotecarios)>0, 1,0)]
+  dataset[,mprestamos:=(mprestamos_personales+mprestamos_prendarios + mprestamos_hipotecarios)]
+  dataset[,mprestamos_payroll:=mprestamos/(mpayroll + mpayroll2)]
+  dataset[,mprestamos_antiguedad:=mprestamos/cliente_antiguedad]
+  dataset[,mprestamos_edad:=mprestamos/cliente_edad]
+  dataset[,mprestamos_edad2:=mprestamos/(cliente_edad)^2]
+  dataset[,mprestamos_antiguedad2:=mprestamos/(cliente_antiguedad)^2]
+  dataset[,sueldo_total:=mpayroll+mpayroll2]
+  dataset[,rent_anual_sueldo:=mrentabilidad_annual/sueldo_total]
+  dataset[,minversiones_payroll:=minversiones/sueldo_total]
+  dataset[,minversiones_mprestamos:=minversiones+mprestamos]
+  dataset[,minversiones_mprestamos_binaria:=ifelse((minversiones + mprestamos)>0,1,0)]
+  
+  
+  
   
   # valvula de seguridad para evitar valores infinitos
   # paso los infinitos a NULOS
@@ -194,7 +215,7 @@ AgregarVariables_IntraMes <- function(dataset) {
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 # Aqui comienza el programa
-cat( "z531_FE_intrames.r  START\n")
+cat( "531_FE_intrames_exp4.r  START\n")
 action_inicializar() 
 
 
@@ -266,4 +287,4 @@ GrabarOutput()
 #  archivos tiene a los files que debo verificar existen para no abortar
 
 action_finalizar( archivos = c("dataset.csv.gz","dataset_metadata.yml")) 
-cat( "z531_FE_intrames.r  END\n")
+cat( "531_FE_intrames_exp4.r  END\n")
