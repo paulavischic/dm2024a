@@ -79,7 +79,7 @@ CA_catastrophe_base <- function( pinputexps, metodo )
   param_local$meta$script <- "/src/workflow-01/f521_CA_reparar_dataset_mice_simple.r"
   
   # Opciones MachineLearning EstadisticaClasica Ninguno
-  param_local$metodo <- MICE
+  param_local$metodo <- metodo
   param_local$semilla <- NULL  # no usa semilla, es deterministico
   
   return( exp_correr_script( param_local ) ) # linea fija}
@@ -112,7 +112,7 @@ DR_drifting_base <- function( pinputexps, metodo)
   
   # valores posibles
   #  "ninguno", "rank_simple", "rank_cero_fijo", "deflacion", "estandarizar"
-  param_local$metodo <- rank_cero_fijo
+  param_local$metodo <- "rank_cero_fijo"
   param_local$semilla <- NULL  # no usa semilla, es deterministico
   
   return( exp_correr_script( param_local ) ) # linea fija
